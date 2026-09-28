@@ -257,8 +257,9 @@ def save_sale(drawer_id, username, nickname, items, discount_rate, payment, cash
 def show_login():
     left, form_column, right = st.columns([1, 1.2, 1])
     with form_column:
-        st.image("image_93b21b.jpg", use_container_width=True)
-        st.markdown("<h3 style='text-align: center; margin-top: -10px;'>Bienvenido a la caja</h3>", unsafe_allow_html=True)
+        # Se cambia el nombre del archivo a logo.png
+        st.image("logo.png", use_container_width=True)
+        st.markdown("<h3 style='text-align: center; margin-top: -10px;'>¡Bienvenido!</h3>", unsafe_allow_html=True)
         st.write("")
         
         with st.form("login_form"):
@@ -266,7 +267,7 @@ def show_login():
             username = st.text_input("Usuario")
             password = st.text_input("Contraseña", type="password")
             nickname = st.text_input("Nombre para el ticket")
-            drawer_id = st.selectbox("Seleccionar Caja", [1, 2], format_func=lambda value: f"Caja Registradora #{value}")
+            drawer_id = st.selectbox("Seleccionar Caja", [1, 2], format_func=lambda value: f"Caja #{value}")
             submitted = st.form_submit_button("Entrar al Sistema", type="primary", use_container_width=True)
             
         if submitted:
