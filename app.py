@@ -257,8 +257,9 @@ def save_sale(drawer_id, username, nickname, items, discount_rate, payment, cash
 def show_login():
     left, form_column, right = st.columns([1, 1.2, 1])
     with form_column:
-        st.markdown("<h2 style='text-align: center; color: #A03322;'>🍕 Pizzería Amore & Masa 🍕</h2>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; font-style: italic;'>Tradición Italiana Casera</p>", unsafe_allow_html=True)
+        st.image("image_93b21b.jpg", use_container_width=True)
+        st.markdown("<h3 style='text-align: center; margin-top: -10px;'>Bienvenido a la caja</h3>", unsafe_allow_html=True)
+        st.write("")
         
         with st.form("login_form"):
             st.subheader("Iniciar Sesión")
