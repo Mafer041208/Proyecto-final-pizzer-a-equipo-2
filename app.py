@@ -259,7 +259,7 @@ def show_login():
     with form_column:
         # Se cambia el nombre del archivo a logo.png
         st.image("logo.png", use_container_width=True)
-        st.markdown("<h3 style='text-align: center; margin-top: -10px;'>¡Bienvenido!</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center; margin-top: -10px;'> ¡Bienvenido!</h3>", unsafe_allow_html=True)
         st.write("")
         
         with st.form("login_form"):
