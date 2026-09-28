@@ -26,25 +26,12 @@ Sistema integral de Punto de Venta (POS), control de inventario en gramos y gest
 
 ## 🚨 Problemática y Solución
 
-| Problemática Manual Anterior
-
- | Solución Automatizada (POS)
-
- |
-| --- | --- |
-| Desabasto recurrente de insumos a mitad de servicio sin previo aviso.
-
- | **Verificación previa de stock:** Valida la disponibilidad exacta en gramos antes de confirmar cualquier orden. |
-| Errores en cobros, cálculo de IVA y desglose de cambio.
-
- | **Motor financiero automatizado:** Aplica IVA del 16%, descuentos autorizados y calcula el cambio exacto o valida tarjetas. |
-| Falta de visibilidad de ventas y folios por turno.
-
- | **Operación Multi-Caja:** Registro independiente por caja (Caja 1 y 2) con folios únicos y reporte diario acumulado. |
-| Pérdida de registro histórico de transacciones.
-
- | **Persistencia relacional SQLite:** Almacenamiento estructurado y seguro que no se borra al cerrar la sesión. |
-
+| 🔴 Problemática Manual Anterior | 🟢 Solución Automatizada (POS) |
+| :--- | :--- |
+| **Desabasto imprevisto:** Insumos agotados a mitad de servicio sin aviso previo. | **Verificación de stock:** Valida la disponibilidad exacta en gramos antes de confirmar cualquier orden. |
+| **Errores de cobro:** Inconsistencias en el cálculo de IVA, descuentos y entrega de cambio. | **Motor financiero:** Aplica IVA del 16%, descuentos autorizados y calcula el cambio exacto o valida tarjetas. |
+| **Sin visibilidad por turno:** Falta de control en ventas totales y folios emitidos. | **Operación Multi-Caja:** Registro independiente por caja (Caja 1 y 2) con folios únicos y reporte diario. |
+| **Pérdida de historial:** Sin registro permanente ni centralizado de las transacciones. | **Base de datos SQLite:** Almacenamiento relacional estructurado y seguro que no se borra al cerrar la sesión. |
 ---
 
 ## ✨ Características Principales
