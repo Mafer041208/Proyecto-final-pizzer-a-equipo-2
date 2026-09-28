@@ -9,9 +9,9 @@
 # 12/09/2026 - Rx: Ajuste en las funciones para mejorar el rendimiento y corrección de detalles de escritura.
 # 17/09/2026 - A: Agregado de validaciones para evitar que el programa se trabe con datos incorrectos.
 # 22/09/2026 - M: Limpieza de partes repetidas y cambio de nombres de variables para mayor claridad.
-# 26/09/2026 - Rx: ÚLTIMA ACTUALIZACIÓN. Revisión general para verificar el correcto funcionamiento del código.
+# 26/09/2026 - Rx: Revisión general para verificar el correcto funcionamiento del código.
+# 27/09/2026 - Corrección para actualizar precios en tiempo real y compatibilidad con tema oscuro.
 
-# Importación de librerías necesarias para el manejo de archivos, base de datos, fechas e interfaz web
 import json
 import sqlite3
 from datetime import datetime
@@ -19,23 +19,19 @@ from pathlib import Path
 
 import streamlit as st
 
-# Configuración del título de la pestaña, ícono y distribución de la pantalla
 st.set_page_config(
     page_title="Pizzería Amore & Masa | Caja 🍕",
     page_icon="🍕",
     layout="wide"
 )
 
-# Ubicación del archivo de la base de datos SQLite en la misma carpeta del proyecto
 DATABASE_PATH = Path(__file__).with_name("pizzeria_app.db")
 
-# Lista de usuarios autorizados para ingresar al sistema con sus contraseñas
 USERS = {
     "admin": "1234",
     "cajero": "5678"
 }
 
-# Diccionario con los ingredientes disponibles y la cantidad requerida para una pizza base
 INGREDIENTS = {
     "harina": ("Harina de Trigo", 250),
     "queso": ("Queso Mozzarella", 150),
@@ -45,34 +41,28 @@ INGREDIENTS = {
     "pina": ("Piña", 70),
 }
 
-# Factores de multiplicación según el tamaño seleccionado para la pizza
 SIZES = {
     "Chica": 1.0,
     "Mediana": 1.5,
     "Grande": 2.0
 }
 
-# Precios base de cada especialidad de pizza
 PIZZAS = {
     "Pepperoni": 120.0,
     "Hawaiana": 115.0
 }
 
-# Cantidad mínima en gramos para generar una advertencia de stock bajo
 LOW_STOCK_LIMIT = 500
 
 
-# Función para establecer conexión con la base de datos de SQLite
 def connect_database():
     connection = sqlite3.connect(DATABASE_PATH)
     connection.row_factory = sqlite3.Row
     return connection
 
 
-# Función para crear las tablas e insertar los datos iniciales si la base de datos está vacía
 def initialize_database():
     with connect_database() as connection:
-        # Tabla para guardar las existencias de ingredientes
         connection.execute(
             """
             CREATE TABLE IF NOT EXISTS inventory (
@@ -81,7 +71,6 @@ def initialize_database():
             )
             """
         )
-        # Tabla para guardar el resumen acumulado de cada caja registradora
         connection.execute(
             """
             CREATE TABLE IF NOT EXISTS drawers (
@@ -94,7 +83,6 @@ def initialize_database():
             )
             """
         )
-        # Tabla para guardar el historial detallado de todas las ventas realizadas
         connection.execute(
             """
             CREATE TABLE IF NOT EXISTS sales (
@@ -116,7 +104,6 @@ def initialize_database():
             )
             """
         )
-        # Registro de inventario inicial por defecto
         connection.executemany(
             "INSERT OR IGNORE INTO inventory (ingredient, quantity) VALUES (?, ?)",
             [
@@ -128,14 +115,12 @@ def initialize_database():
                 ("pina", 1000.0),
             ],
         )
-        # Registro inicial de las dos cajas registradoras
         connection.executemany(
             "INSERT OR IGNORE INTO drawers (drawer_id) VALUES (?)",
             [(1,), (2,)],
         )
 
 
-# Función para obtener los niveles actuales del inventario desde la base de datos
 def load_inventory():
     with connect_database() as connection:
         rows = connection.execute(
@@ -144,7 +129,6 @@ def load_inventory():
     return {row["ingredient"]: row["quantity"] for row in rows}
 
 
-# Función para obtener la información de uso de una caja en específico
 def load_drawer(drawer_id):
     with connect_database() as connection:
         return connection.execute(
@@ -152,25 +136,20 @@ def load_drawer(drawer_id):
         ).fetchone()
 
 
-# Función de apoyo para darle formato visual de moneda a los valores numéricos
 def format_money(value):
     return f"${value:,.2f}"
 
 
-# Función principal para procesar, validar y guardar una venta en la base de datos
 def save_sale(drawer_id, username, nickname, items, discount_rate, payment, cash_received, card_auth_code=""):
-    # Cálculos monetarios principales
     subtotal = round(sum(item["price"] * item["quantity"] for item in items), 2)
     discount = round(subtotal * discount_rate, 2)
     discounted_subtotal = round(subtotal - discount, 2)
     tax = round(discounted_subtotal * 0.16, 2)
     total = round(discounted_subtotal + tax, 2)
 
-    # Validación de dinero en efectivo suficiente
     if payment == "Efectivo" and cash_received < total:
         return False, f"Faltan {format_money(total - cash_received)} para completar el pago."
 
-    # Cálculo exacto de los ingredientes requeridos según el tamaño y la cantidad de pizzas
     requirements = {key: 0.0 for key in INGREDIENTS}
     for item in items:
         multiplier = SIZES[item["size"]]
@@ -185,7 +164,6 @@ def save_sale(drawer_id, username, nickname, items, discount_rate, payment, cash
     try:
         connection.execute("BEGIN IMMEDIATE")
         
-        # Verificación de existencias suficientes en el inventario antes de procesar
         stock = {
             row["ingredient"]: row["quantity"]
             for row in connection.execute("SELECT ingredient, quantity FROM inventory")
@@ -199,7 +177,6 @@ def save_sale(drawer_id, username, nickname, items, discount_rate, payment, cash
             connection.rollback()
             return False, "Inventario insuficiente de: " + ", ".join(insufficient) + "."
 
-        # Generación de número de folio consecutivo para la caja seleccionada
         drawer = connection.execute(
             "SELECT * FROM drawers WHERE drawer_id = ?", (drawer_id,)
         ).fetchone()
@@ -207,7 +184,6 @@ def save_sale(drawer_id, username, nickname, items, discount_rate, payment, cash
         ticket = f"Caja #{drawer_id}-{folio:04d}"
         now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         
-        # Conteo de unidades por especialidad
         pizza_count = sum(item["quantity"] for item in items)
         pepperoni_count = sum(
             item["quantity"] for item in items if item["pizza"] == "Pepperoni"
@@ -215,7 +191,6 @@ def save_sale(drawer_id, username, nickname, items, discount_rate, payment, cash
         hawaiian_count = pizza_count - pepperoni_count
         change_due = round(cash_received - total, 2) if payment == "Efectivo" else 0.0
 
-        # Descuento de ingredientes en la base de datos
         for key, amount in requirements.items():
             if amount:
                 connection.execute(
@@ -223,7 +198,6 @@ def save_sale(drawer_id, username, nickname, items, discount_rate, payment, cash
                     (amount, key),
                 )
 
-        # Actualización de acumulados en la caja registradora
         connection.execute(
             """
             UPDATE drawers
@@ -234,12 +208,10 @@ def save_sale(drawer_id, username, nickname, items, discount_rate, payment, cash
             (pizza_count, pepperoni_count, hawaiian_count, folio, total, drawer_id),
         )
 
-        # Preparación de descripción del pago en tarjeta
         payment_description = payment
         if payment == "Tarjeta" and card_auth_code:
             payment_description = f"Tarjeta (Autorización: {card_auth_code})"
 
-        # Registro de la transacción completa en la tabla de ventas
         connection.execute(
             """
             INSERT INTO sales (
@@ -282,12 +254,11 @@ def save_sale(drawer_id, username, nickname, items, discount_rate, payment, cash
         connection.close()
 
 
-# Vista del formulario de acceso al sistema
 def show_login():
     left, form_column, right = st.columns([1, 1.2, 1])
     with form_column:
         st.markdown("<h2 style='text-align: center; color: #A03322;'>🍕 Pizzería Amore & Masa 🍕</h2>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; font-style: italic; color: #555;'>Tradición Italiana Casera</p>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center; font-style: italic;'>Tradición Italiana Casera</p>", unsafe_allow_html=True)
         
         with st.form("login_form"):
             st.subheader("Iniciar Sesión")
@@ -306,11 +277,10 @@ def show_login():
                     drawer_id=drawer_id,
                 )
                 st.rerun()
-            st.error("Verifica el usuario, la contraseña y ingresa un nombre para el ticket.")
+            st.error("Verifica el usuario, la contraseña y asegúrate de ingresar un nombre.")
         st.info("Cuentas de prueba: admin / 1234  o  cajero / 5678")
 
 
-# Vista principal para la toma de pedidos y cobro
 def show_sales():
     if st.session_state.pop("clear_order", False):
         for pizza in PIZZAS:
@@ -320,44 +290,42 @@ def show_sales():
     st.title("🇮🇹 Menú & Registro de Pedidos")
     st.caption(f"Atendiendo en Caja #{st.session_state.drawer_id} · Cajero/a: {st.session_state.nickname}")
 
-    with st.form("sale_form"):
-        st.subheader("Selección de Pizzas")
-        headers = st.columns([1.3, 1, 1, 1])
-        headers[0].markdown("**Especialidad**")
-        for column, size in zip(headers[1:], SIZES):
-            column.markdown(f"**{size}**")
+    st.subheader("Selección de Pizzas")
+    headers = st.columns([1.3, 1, 1, 1])
+    headers[0].markdown("**Especialidad**")
+    for column, size in zip(headers[1:], SIZES):
+        column.markdown(f"**{size}**")
 
-        quantities = {}
-        for pizza in PIZZAS:
-            columns = st.columns([1.3, 1, 1, 1])
-            precio_base = PIZZAS[pizza]
-            columns[0].markdown(f"**{pizza}**<br><small style='color: #666;'>Base: ${precio_base:.0f}</small>", unsafe_allow_html=True)
-            for column, size in zip(columns[1:], SIZES):
-                quantities[(pizza, size)] = column.number_input(
-                    f"{pizza} {size}", min_value=0, max_value=30, step=1,
-                    key=f"qty_{pizza}_{size}", label_visibility="collapsed",
-                )
-
-        st.subheader("Opciones de Pago y Descuentos")
-        col_desc, col_pago = st.columns(2)
-        with col_desc:
-            discount_rate = st.selectbox(
-                "Descuento aplicable", [0.0, 0.05, 0.10, 0.15],
-                format_func=lambda value: f"{value:.0%} de descuento",
+    quantities = {}
+    for pizza in PIZZAS:
+        columns = st.columns([1.3, 1, 1, 1])
+        precio_base = PIZZAS[pizza]
+        columns[0].markdown(f"**{pizza}**<br><small style='color: var(--text-color); opacity: 0.7;'>Base: ${precio_base:.0f}</small>", unsafe_allow_html=True)
+        for column, size in zip(columns[1:], SIZES):
+            quantities[(pizza, size)] = column.number_input(
+                f"{pizza} {size}", min_value=0, max_value=30, step=1,
+                key=f"qty_{pizza}_{size}", label_visibility="collapsed",
             )
-        with col_pago:
-            payment = st.radio("Forma de Pago", ["Efectivo", "Tarjeta"], horizontal=True)
 
-        cash_received = 0.0
-        card_auth_code = ""
+    st.subheader("Opciones de Pago y Descuentos")
+    col_desc, col_pago = st.columns(2)
+    with col_desc:
+        discount_rate = st.selectbox(
+            "Descuento aplicable", [0.0, 0.05, 0.10, 0.15],
+            format_func=lambda value: f"{value:.0%} de descuento",
+        )
+    with col_pago:
+        payment = st.radio("Forma de Pago", ["Efectivo", "Tarjeta"], horizontal=True)
 
-        if payment == "Efectivo":
-            cash_received = st.number_input("Efectivo recibido ($)", min_value=0.0, step=10.0)
-        else:
-            card_auth_code = st.text_input("Código de autorización bancaria (6 dígitos)", max_chars=6)
+    cash_received = 0.0
+    card_auth_code = ""
 
-        submitted = st.form_submit_button("Confirmar y Registrar Venta", type="primary", use_container_width=True)
+    if payment == "Efectivo":
+        cash_received = st.number_input("Efectivo recibido ($)", min_value=0.0, step=10.0)
+    else:
+        card_auth_code = st.text_input("Código de autorización bancaria (6 dígitos)", max_chars=6)
 
+    # Cálculo dinámico fuera del formulario
     items = []
     for (pizza, size), quantity in quantities.items():
         if quantity:
@@ -368,7 +336,6 @@ def show_sales():
                 "price": PIZZAS[pizza] * SIZES[size],
             })
 
-    # Resumen rápido del costo actual antes de procesar
     subtotal = round(sum(item["price"] * item["quantity"] for item in items), 2)
     total_estimado = round((subtotal - subtotal * discount_rate) * 1.16, 2)
     
@@ -381,7 +348,9 @@ def show_sales():
             st.session_state["clear_order"] = True
             st.rerun()
 
-    # Procesamiento al presionar el botón de cobrar
+    # Botón estándar para procesar (fuera de formulario)
+    submitted = st.button("Confirmar y Registrar Venta", type="primary", use_container_width=True)
+
     if submitted:
         if not items:
             st.error("Selecciona al menos una pizza para continuar.")
@@ -410,7 +379,6 @@ def show_sales():
         st.session_state["clear_order"] = True
         st.rerun()
 
-    # Despliegue del comprobante / ticket de compra reciente
     result = st.session_state.get("last_sale")
     if result:
         st.success(f"Venta registrada exitosamente · Ticket {result['ticket']}")
@@ -428,7 +396,6 @@ def show_sales():
                 st.markdown(f"**Cambio Devuelto:** {format_money(result['change'])}")
 
 
-# Vista para consultar y reabastecer los insumos de la cocina
 def show_inventory():
     st.title("📦 Control de Inventario")
     st.caption("Existencias compartidas entre las cajas")
@@ -464,7 +431,6 @@ def show_inventory():
         st.rerun()
 
 
-# Vista para visualizar el corte y los reportes de ventas
 def show_reports():
     st.title("📊 Corte y Reporte de Ventas")
     drawer_id = st.session_state.drawer_id
@@ -498,30 +464,29 @@ def show_reports():
         st.caption("Aún no se registran ventas en esta caja durante la sesión actual.")
 
 
-# Función de arranque e inyección de estilos de la pizzería estilo italiana
 def main():
+    # CSS ajustado para respetar las variables del sistema (Claro/Oscuro)
     st.markdown(
         """
         <style>
         .stApp {
-            background-color: #FDFBF7;
             font-family: 'Georgia', serif;
         }
+        /* Mantiene el color italiano verde albahaca solo en la barra lateral */
         [data-testid="stSidebar"] {
-            background-color: #1E392A;
+            background-color: #1E392A !important;
         }
         [data-testid="stSidebar"] * {
-            color: #FDFBF7 !important;
+            color: rgba(255, 255, 255, 0.95) !important;
         }
-        h1, h2, h3 {
-            color: #2C2C2C;
-        }
+        /* Las métricas ahora respetan los colores dinámicos del tema */
         div[data-testid="stMetric"] {
-            background-color: #F4EFE6;
-            border: 1px solid #E0D7C6;
+            background-color: var(--secondary-background-color);
+            border: 1px solid var(--border-color);
             padding: 12px;
             border-radius: 8px;
         }
+        /* Color rojo terracota en los botones principales, forzando texto blanco */
         .stButton button[kind="primary"], .stFormSubmitButton button[kind="primary"] {
             background-color: #A03322 !important;
             border-color: #A03322 !important;
