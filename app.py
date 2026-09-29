@@ -428,7 +428,7 @@ def show_sales():
 # --- INTERFAZ 3: CONTROL DE INVENTARIO ---
 
 def show_inventory():
-    st.title("📦 Control de Inventario")
+    st.title(" Control de Inventario")
     st.caption("Existencias compartidas entre las cajas")
     
     inventory = load_inventory()
@@ -467,7 +467,7 @@ def show_inventory():
 # --- INTERFAZ 4: CORTE Y REPORTES ---
 
 def show_reports():
-    st.title("📊 Corte y Reporte de Ventas")
+    st.title(" Corte y Reporte de Ventas")
     drawer_id = st.session_state.drawer_id
     drawer = load_drawer(drawer_id)
 
