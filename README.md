@@ -1,10 +1,10 @@
-# 🍕 Amore & Masa - Sistema de Gestión de Pedidos e Inventario (POS)
+# Amore & Masa - Sistema de Gestión de Pedidos e Inventario (POS)
 
 Sistema integral de Punto de Venta (POS), control de inventario en gramos y gestión de ventas en tiempo real diseñado para la pizzería artesanal estilo napolitano **Amore & Masa**, ubicada en Monterrey, Nuevo León.
 
 ---
 
-## 📋 Tabla de Contenidos
+## Tabla de Contenidos
 
 * [Descripción del Proyecto]
 * [Problemática y Solución]
@@ -18,13 +18,13 @@ Sistema integral de Punto de Venta (POS), control de inventario en gramos y gest
 
 ---
 
-## 📖 Descripción del Proyecto
+## Descripción del Proyecto
 
 **Amore & Masa** es una pizzería artesanal que experimentó un acelerado crecimiento en sus primeros meses de operación. Este sistema sustituye el manejo manual basado en libretas y mensajes de WhatsApp por una solución digital centralizada y visual, la cual automatiza el flujo de caja, el cálculo de impuestos y descuentos, y la deducción exacta de materia prima por pizza vendida.
 
 ---
 
-## 🚨 Problemática y Solución
+## Problemática y Solución
 
 | 🔴 Problemática Manual Anterior | 🟢 Solución Automatizada (POS) |
 | :--- | :--- |
@@ -34,23 +34,23 @@ Sistema integral de Punto de Venta (POS), control de inventario en gramos y gest
 | **Pérdida de historial:** Sin registro permanente ni centralizado de las transacciones. | **Base de datos SQLite:** Almacenamiento relacional estructurado y seguro que no se borra al cerrar la sesión. |
 ---
 
-## ✨ Características Principales
+## Características Principales
 
-* **🔐 Autenticación y Asignación de Caja:** Control de acceso por credenciales con selección de estación de trabajo (Caja #1 o Caja #2) y personalización del ticket con el nombre del cajero.
-* **🛒 Punto de Venta Interactivo (POS):** Captura de pedidos por especialidad y tamaño en tiempo real con precálculo de totales antes de procesar.
-* **📦 Control de Inventario Compartido:** Gestión en gramos compartida entre múltiples cajas con alertas de stock crítico ($\le 500\text{ g}$).
-* **💳 Modos de Pago Flexibles:**
+* ** Autenticación y Asignación de Caja:** Control de acceso por credenciales con selección de estación de trabajo (Caja #1 o Caja #2) y personalización del ticket con el nombre del cajero.
+* ** Punto de Venta Interactivo (POS):** Captura de pedidos por especialidad y tamaño en tiempo real con precálculo de totales antes de procesar.
+* ** Control de Inventario Compartido:** Gestión en gramos compartida entre múltiples cajas con alertas de stock crítico ($\le 500\text{ g}$).
+* ** Modos de Pago Flexibles:**
 * **Efectivo:** Validación de importe recibido y cálculo automático de cambio.
 * **Tarjeta:** Exige y valida un código de autorización bancario de 6 dígitos obligatorios.
 
 
-* **🧾 Generación de Tickets:** Recibo digital estructurado con desglose de Subtotal, Descuento, IVA (16%), Total, Cajero y Folio único por caja.
-* **📊 Reportes y Corte de Caja:** Monitoreo del volumen de pizzas vendidas, ingresos acumulados y desglose por especialidad (Pepperoni vs. Hawaiana).
-* **🔄 Reabastecimiento de Insumos:** Módulo directo para incrementar inventarios al recibir insumos de proveedores.
+* ** Generación de Tickets:** Recibo digital estructurado con desglose de Subtotal, Descuento, IVA (16%), Total, Cajero y Folio único por caja.
+* ** Reportes y Corte de Caja:** Monitoreo del volumen de pizzas vendidas, ingresos acumulados y desglose por especialidad (Pepperoni vs. Hawaiana).
+* ** Reabastecimiento de Insumos:** Módulo directo para incrementar inventarios al recibir insumos de proveedores.
 
 ---
 
-## 🛠️ Arquitectura y Tecnologías
+##  Arquitectura y Tecnologías
 
 El proyecto está desarrollado completamente en **Python 3** e implementa un patrón modular de separación entre la interfaz de usuario, la lógica de negocio y el acceso a datos.
 
@@ -61,7 +61,7 @@ El proyecto está desarrollado completamente en **Python 3** e implementa un pat
 
 ---
 
-## 📐 Reglas de Negocio
+##  Reglas de Negocio
 
 ### 1. Insumos Base por Pizza Chica (1.0x)
 
@@ -91,7 +91,7 @@ $$\text{Consumo Real} = \text{Receta Base} \times \text{Multiplicador} \times \t
 
 ---
 
-## 🗄️ Estructura de la Base de Datos
+## Estructura de la Base de Datos
 
 El archivo `pizzeria_app.db` consta de tres tablas relacionales auto-administradas:
 
@@ -135,7 +135,7 @@ CREATE TABLE sales (
 
 ---
 
-## 🚀 Instalación y Configuración
+## Instalación y Configuración
 
 ### Prerrequisitos
 
@@ -183,7 +183,7 @@ Abre tu navegador e ingresa a `http://localhost:8501`.
 
 ---
 
-## 👤 Credenciales de Prueba
+## Credenciales de Prueba
 
 | Usuario | Contraseña | Rol |
 | --- | --- | --- |
@@ -192,7 +192,7 @@ Abre tu navegador e ingresa a `http://localhost:8501`.
 
 ---
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```text
 amore-y-masa-pos/
@@ -205,26 +205,26 @@ amore-y-masa-pos/
 
 ---
 
-## 👥 Equipo de Desarrollo y Créditos
+## Equipo de Desarrollo y Créditos
 
 Este proyecto fue desarrollado como Entrega Final para la materia **Fundamentos de Programación** en la **Universidad Tecmilenio**.
 
 ### Autores
 
-* 👨‍💻 **Diego Antonio Vargas Ramírez**
-* 👨‍💻 **Andoni Acevedo Martínez**
-* 👩‍💻 **Ana Teresa Ramírez Hernández**
-* 👩‍💻 **María Fernanda Gutiérrez Córdova**
-* 👨‍💻 **Mario Vargas Gamboa**
+*  **Diego Antonio Vargas Ramírez**
+*  **Andoni Acevedo Martínez**
+*  **Ana Teresa Ramírez Hernández**
+*  **María Fernanda Gutiérrez Córdova**
+*  **Mario Vargas Gamboa**
 
 ### Docente Evaluador
 
-* 👩‍🏫 **Blanca Aracely Aranda Machorro**
+*  **Blanca Aracely Aranda Machorro**
 
 
 ### Asesoría Técnica
 
-* 👨‍💼 **Francisco Arturo Zevada Hurtado** (Especialista en TI)
+*  **Francisco Arturo Zevada Hurtado** (Especialista en TI)
 
 ---
 
